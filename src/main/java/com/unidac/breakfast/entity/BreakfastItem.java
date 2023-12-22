@@ -19,7 +19,10 @@ public class BreakfastItem implements Serializable {
     private Long id;
     private String name;
     private Boolean missing;
-    @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "colaborator_id")
     private User colaborator;
+    @ManyToOne
+    @JoinColumn(name = "breakfast_id")
+    private BreakfastDay breakfast;
 }

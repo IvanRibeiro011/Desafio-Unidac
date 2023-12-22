@@ -21,10 +21,18 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(unique = true)
     private String cpf;
 
-    @OneToMany
+    @OneToMany(mappedBy = "colaborator")
     private List<BreakfastItem> items = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "colaborators")
     private Set<BreakfastDay> days = new HashSet<>();
+
+    public User(Long id, String name, String cpf) {
+        this.id = id;
+        this.name = name;
+        this.cpf = cpf;
+    }
 }
