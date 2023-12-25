@@ -19,6 +19,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
             value = "SELECT * FROM tb_users")
     List<User> searchAllUsers();
 
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM tb_users as u " +
+                    "INNER JOIN tb_breakfast_collaborator as bc ON u.id - bc.collaborator_id " +
+                    "WHERE bc.collaborator_id = :id")
+    User searchUsersByDate(Long id);
+
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM tb_users WHERE id IN (:ids)")
+    List<User> searchUsersById(List<Long> ids);
+
     @Modifying
     @Query(nativeQuery = true,
             value = "INSERT INTO tb_users (name,cpf) VALUES (:name,:cpf)")
@@ -33,4 +43,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true,
             value = "DELETE FROM tb_users WHERE id = :id")
     void deleteUser(Long id);
+
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "DELETE FROM tb_breakfast_collaborator WHERE collaborator_id = :id")
+    void unAssociateUsersFromBreakfast(Long id);
 }

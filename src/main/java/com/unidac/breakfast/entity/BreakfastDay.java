@@ -21,12 +21,13 @@ public class BreakfastDay implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private LocalDate date;
     @ManyToMany
-    @JoinTable(name = "tb_breakfast_colaborator",
+    @JoinTable(name = "tb_breakfast_collaborator",
             joinColumns = @JoinColumn(name = "breakfast_id"),
-            inverseJoinColumns = @JoinColumn(name = "colaborator_id"))
+            inverseJoinColumns = @JoinColumn(name = "collaborator_id"))
     private Set<User> colaborators = new HashSet<>();
-    @OneToMany(mappedBy = "breakfast")
+    @OneToMany(mappedBy = "breakfast", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BreakfastItem> items = new ArrayList<>();
 }

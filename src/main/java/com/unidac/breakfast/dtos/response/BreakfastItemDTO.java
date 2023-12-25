@@ -14,14 +14,14 @@ public class BreakfastItemDTO {
     private Long id;
     private String name;
     private Boolean missing;
-    private UserDTO colaborator;
-    private BreakfastDayDTO breakfast;
+    private Long collaboratorId;
+    private Long breakfastId;
 
     public BreakfastItemDTO(BreakfastItem entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.missing = entity.getMissing();
-        this.colaborator = new UserDTO(entity.getColaborator());
-        this.breakfast = new BreakfastDayDTO(entity.getBreakfast());
+        this.collaboratorId = entity.getColaborator().getId();
+        this.breakfastId = entity.getBreakfast().getId();
     }
 }

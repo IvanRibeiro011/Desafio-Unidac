@@ -1,9 +1,10 @@
 package com.unidac.breakfast.service;
 
-import com.unidac.breakfast.dtos.request.ItemInsertDTO;
 import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
+import com.unidac.breakfast.entity.BreakfastDay;
 import com.unidac.breakfast.entity.BreakfastItem;
 import com.unidac.breakfast.entity.User;
+import com.unidac.breakfast.repository.BreakfastDayRepository;
 import com.unidac.breakfast.repository.BreakfastItemRepository;
 import com.unidac.breakfast.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class BreakfastItemService {
 
     private final BreakfastItemRepository repository;
     private final UserRepository userRepository;
+    private final BreakfastDayRepository breakfastRepository;
 
-    public BreakfastItemService(BreakfastItemRepository repository, UserRepository userRepository) {
+    public BreakfastItemService(BreakfastItemRepository repository, UserRepository userRepository, BreakfastDayRepository breakfastRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.breakfastRepository = breakfastRepository;
     }
 
     @Transactional(readOnly = true)
@@ -35,19 +38,15 @@ public class BreakfastItemService {
     }
 
     @Transactional
-    public void insert(ItemInsertDTO dto) {
-        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new RuntimeException("User not found"));
-        repository.insert(dto.getName(), dto.getMissing(), user.getId());
+    public void update(Long id, BreakfastItemDTO dto) {
+        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        BreakfastDay day = breakfastRepository.getReferenceById(dto.getBreakfastId());
+        repository.updateItem(id, dto.getName(), dto.getMissing(), user.getId(), day.getId());
     }
 
-//    @Transactional
-//    public void update(Long id, BreakfastItemDTO dto) {
-//        repository.updateItem(id, dto.getName(), dto.getCpf());
-//    }
-//
-//    @Transactional
-//    public void delete(Long id) {
-//        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-//        repository.deleteItem(item.getId());
-//    }
+    @Transactional
+    public void delete(Long id) {
+        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        repository.deleteItem(item.getId());
+    }
 }

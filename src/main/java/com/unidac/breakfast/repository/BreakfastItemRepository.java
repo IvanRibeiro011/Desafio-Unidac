@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,18 +20,41 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
             value = "SELECT * FROM tb_items")
     List<BreakfastItem> searchAllItems();
 
-    @Modifying
     @Query(nativeQuery = true,
-            value = "INSERT INTO tb_items (name,missing,colaborator_id) VALUES (:name,:missing,:collaboratorId)")
-    void insert(String name, Boolean missing, Long collaboratorId);
+            value = "SELECT i.* FROM tb_items AS i INNER JOIN tb_breakfast as b ON i.breakfast_id = b.id" +
+                    " WHERE b.date = :date")
+    List<BreakfastItem> searchItemsByDay(LocalDate date);
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE tb_items  SET name = :name , cpf = :cpf WHERE id = :id")
-    void updateItem(Long id, String name, String cpf);
+            value = "INSERT INTO tb_items (name,missing,collaborator_id,breakfast_id) VALUES (:name,:missing,:collaboratorId,:breakfastId)")
+    void insert(String name, Boolean missing, Long collaboratorId, Long breakfastId);
+
+    @Query(value = "SELECT CASE WHEN COUNT(bi) > 0 THEN true ELSE false END " +
+            "FROM tb_items bi " +
+            "JOIN tb_breakfast bd ON bi.breakfast_id = bd.id " +
+            "WHERE LOWER(bi.name) = LOWER(:itemName) AND bd.date = :date", nativeQuery = true)
+    boolean verifyItemBynameAndDate(
+            String itemName,
+            LocalDate date
+    );
+
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "UPDATE tb_items  SET name = :name " +
+                    ", missing = :missing " +
+                    ", colaborator_id = :collaboratorId" +
+                    ", breakfast_id = :breakfastId WHERE id = :id")
+    void updateItem(Long id, String name, Boolean missing, Long collaboratorId, Long breakfastId);
 
     @Modifying
     @Query(nativeQuery = true,
             value = "DELETE FROM tb_items WHERE id = :id")
     void deleteItem(Long id);
+
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "DELETE FROM tb_items WHERE collaborator_id = :id")
+    void deleteItemWithUserId(Long id);
+
 }

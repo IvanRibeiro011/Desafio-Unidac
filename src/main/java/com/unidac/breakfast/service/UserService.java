@@ -3,6 +3,7 @@ package com.unidac.breakfast.service;
 import com.unidac.breakfast.dtos.request.UserInsertDTO;
 import com.unidac.breakfast.dtos.response.UserDTO;
 import com.unidac.breakfast.entity.User;
+import com.unidac.breakfast.repository.BreakfastItemRepository;
 import com.unidac.breakfast.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,11 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository repository;
+    private final BreakfastItemRepository itemRepository;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, BreakfastItemRepository itemRepository) {
         this.repository = repository;
+        this.itemRepository = itemRepository;
     }
 
     @Transactional(readOnly = true)
@@ -42,6 +45,9 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         User user = repository.searchById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        itemRepository.deleteItemWithUserId(user.getId());
+        repository.unAssociateUsersFromBreakfast(user.getId());
         repository.deleteUser(user.getId());
     }
+
 }
