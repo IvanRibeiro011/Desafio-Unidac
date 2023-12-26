@@ -46,6 +46,14 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
             LocalDate date
     );
 
+    @Query(value = "SELECT CASE WHEN COUNT(bi) > 0 THEN true ELSE false END " +
+            "FROM tb_items bi " +
+            "JOIN tb_breakfast bd ON bi.breakfast_id = bd.id " +
+            "WHERE LOWER(bi.name) = LOWER(:itemName)", nativeQuery = true)
+    boolean verifyItemByname(
+            String itemName
+    );
+
     @Modifying
     @Query(nativeQuery = true,
             value = "UPDATE tb_items  SET name = :name " +

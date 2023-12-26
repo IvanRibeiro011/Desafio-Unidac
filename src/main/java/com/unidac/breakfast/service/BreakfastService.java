@@ -59,14 +59,13 @@ public class BreakfastService {
     public void associateItem(BreakfastAssociationDTO dto) {
         BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         List<BreakfastItem> savedItems = itemRepository.searchAllItems();
-        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         BreakfastItem item = itemRepository.searchById(dto.getItemId()).orElseThrow(() -> new ResourceNotFoundException(ITEM_NOT_FOUND));
         savedItems.forEach(
                 i -> {
                     if (itemRepository.verifyItemBynameAndDate(item.getName(), day.getDate())) {
                         throw new ItemAlreadyRegisteredException("O item " + i.getName() + " já foi registrado , favor escolher outra opção");
                     } else {
-                        itemRepository.insert(i.getName(), i.getMissing(), user.getId(), day.getId());
+                        itemRepository.updateItem(dto.getItemId(), i.getName(), i.getMissing(), dto.getCollaboratorId(), day.getId());
                     }
                 }
         );

@@ -5,6 +5,7 @@ import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
 import com.unidac.breakfast.entity.BreakfastDay;
 import com.unidac.breakfast.entity.BreakfastItem;
 import com.unidac.breakfast.entity.User;
+import com.unidac.breakfast.exceptions.ItemAlreadyRegisteredException;
 import com.unidac.breakfast.exceptions.ResourceNotFoundException;
 import com.unidac.breakfast.repository.BreakfastDayRepository;
 import com.unidac.breakfast.repository.BreakfastItemRepository;
@@ -16,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.ITEM_NOT_FOUND;
-import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
+import static com.unidac.breakfast.messages.Constants.*;
 
 @Service
 public class BreakfastItemService {
@@ -43,10 +43,16 @@ public class BreakfastItemService {
         List<BreakfastItem> items = repository.searchAllItems();
         return items.stream().map(BreakfastItemDTO::new).toList();
     }
+
     @Transactional
     public void insert(ItemInsertDTO dto) {
-        repository.insertItem(dto.getName());
+        if (repository.verifyItemByname(dto.getName())) {
+            repository.insertItem(dto.getName());
+        } else {
+            throw new ItemAlreadyRegisteredException(ITEM_ALREADY_REGISTERED);
+        }
     }
+
     @Transactional
     public void update(Long id, BreakfastItemDTO dto) {
         User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
