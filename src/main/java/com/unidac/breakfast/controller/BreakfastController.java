@@ -43,9 +43,9 @@ public class BreakfastController {
     }
 
     @PutMapping("/associate")
-    public ResponseEntity<String> associateNewUserToBreakfast(@Valid @RequestBody UserAssociationDTO dto) {
+    public ResponseEntity<String> associateToBreakfast(@Valid @RequestBody UserAssociationDTO dto) {
         service.associateUserToBreakfast(dto);
-        return ResponseEntity.ok("Usuário associado com sucesso");
+        return ResponseEntity.ok("Associação concluída com sucesso");
     }
 
     @DeleteMapping("{id}")

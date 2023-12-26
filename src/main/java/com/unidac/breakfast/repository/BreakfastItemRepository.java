@@ -22,8 +22,8 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
 
     @Query(nativeQuery = true,
             value = "SELECT i.* FROM tb_items AS i INNER JOIN tb_breakfast as b ON i.breakfast_id = b.id" +
-                    " WHERE b.date = :date")
-    List<BreakfastItem> searchItemsByDay(LocalDate date);
+                    " WHERE b.date < :date AND i.missing IS NULL ")
+    List<BreakfastItem> searchMissingItemsByDay(LocalDate date);
 
     @Modifying
     @Query(nativeQuery = true,
@@ -49,6 +49,11 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
 
     @Modifying
     @Query(nativeQuery = true,
+            value = "UPDATE tb_items SET missing = TRUE WHERE id = :id")
+    void updateMissingItem(Long id);
+
+    @Modifying
+    @Query(nativeQuery = true,
             value = "DELETE FROM tb_items WHERE id = :id")
     void deleteItem(Long id);
 
@@ -56,5 +61,6 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
     @Query(nativeQuery = true,
             value = "DELETE FROM tb_items WHERE collaborator_id = :id")
     void deleteItemWithUserId(Long id);
+
 
 }

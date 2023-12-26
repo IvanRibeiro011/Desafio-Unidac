@@ -1,4 +1,4 @@
-package com.unidac.breakfast.dtos.request;
+package com.unidac.breakfast.exceptions.errors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ItemAssociationDTO {
-    private String name;
-    private Boolean missing;
+public class ApiFieldError {
+
+    private String field;
+    private String error;
 
 }

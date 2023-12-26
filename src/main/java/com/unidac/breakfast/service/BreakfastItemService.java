@@ -4,13 +4,19 @@ import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
 import com.unidac.breakfast.entity.BreakfastDay;
 import com.unidac.breakfast.entity.BreakfastItem;
 import com.unidac.breakfast.entity.User;
+import com.unidac.breakfast.exceptions.ResourceNotFoundException;
 import com.unidac.breakfast.repository.BreakfastDayRepository;
 import com.unidac.breakfast.repository.BreakfastItemRepository;
 import com.unidac.breakfast.repository.UserRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import static com.unidac.breakfast.messages.Constants.itemNotFound;
+import static com.unidac.breakfast.messages.Constants.userNotFound;
 
 @Service
 public class BreakfastItemService {
@@ -27,7 +33,7 @@ public class BreakfastItemService {
 
     @Transactional(readOnly = true)
     public BreakfastItemDTO findById(Long id) {
-        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(itemNotFound));
         return new BreakfastItemDTO(item);
     }
 
@@ -39,14 +45,21 @@ public class BreakfastItemService {
 
     @Transactional
     public void update(Long id, BreakfastItemDTO dto) {
-        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
         BreakfastDay day = breakfastRepository.getReferenceById(dto.getBreakfastId());
         repository.updateItem(id, dto.getName(), dto.getMissing(), user.getId(), day.getId());
     }
 
     @Transactional
     public void delete(Long id) {
-        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(itemNotFound));
         repository.deleteItem(item.getId());
+    }
+
+    @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
+    @Transactional
+    public void verifyMissingItems() {
+        List<BreakfastItem> missingItems = repository.searchMissingItemsByDay(LocalDate.now());
+        missingItems.forEach(i -> repository.updateMissingItem(i.getId()));
     }
 }
