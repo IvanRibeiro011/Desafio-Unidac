@@ -56,7 +56,7 @@ public class BreakfastItemService {
         repository.deleteItem(item.getId());
     }
 
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
+//    @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
     @Transactional
     public void verifyMissingItems() {
         List<BreakfastItem> missingItems = repository.searchMissingItemsByDay(LocalDate.now());
