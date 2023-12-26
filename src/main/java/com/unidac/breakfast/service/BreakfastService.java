@@ -1,10 +1,12 @@
 package com.unidac.breakfast.service;
 
+import com.unidac.breakfast.dtos.request.BreakfastAssociationDTO;
 import com.unidac.breakfast.dtos.request.BreakfastDayInsertDTO;
 import com.unidac.breakfast.dtos.request.ItemInsertDTO;
 import com.unidac.breakfast.dtos.request.UserAssociationDTO;
 import com.unidac.breakfast.dtos.response.BreakfastDayDTO;
 import com.unidac.breakfast.entity.BreakfastDay;
+import com.unidac.breakfast.entity.BreakfastItem;
 import com.unidac.breakfast.entity.User;
 import com.unidac.breakfast.exceptions.ItemAlreadyRegisteredException;
 import com.unidac.breakfast.exceptions.ResourceNotFoundException;
@@ -16,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.BREAKFAST_NOT_FOUND;
-import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
+import static com.unidac.breakfast.messages.Constants.*;
 
 @Service
 public class BreakfastService {
@@ -52,6 +53,23 @@ public class BreakfastService {
         if (!users.isEmpty()) {
             verifyItemsAndInsert(day, dto.getItems());
         }
+    }
+
+    @Transactional
+    public void associateItem(BreakfastAssociationDTO dto) {
+        BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
+        List<BreakfastItem> savedItems = itemRepository.searchAllItems();
+        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+        BreakfastItem item = itemRepository.searchById(dto.getItemId()).orElseThrow(() -> new ResourceNotFoundException(ITEM_NOT_FOUND));
+        savedItems.forEach(
+                i -> {
+                    if (itemRepository.verifyItemBynameAndDate(item.getName(), day.getDate())) {
+                        throw new ItemAlreadyRegisteredException("O item " + i.getName() + " já foi registrado , favor escolher outra opção");
+                    } else {
+                        itemRepository.insert(i.getName(), i.getMissing(), user.getId(), day.getId());
+                    }
+                }
+        );
     }
 
     @Transactional

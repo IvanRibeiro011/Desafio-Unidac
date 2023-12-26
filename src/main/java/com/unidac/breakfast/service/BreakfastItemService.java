@@ -1,5 +1,6 @@
 package com.unidac.breakfast.service;
 
+import com.unidac.breakfast.dtos.request.ItemInsertDTO;
 import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
 import com.unidac.breakfast.entity.BreakfastDay;
 import com.unidac.breakfast.entity.BreakfastItem;
@@ -42,7 +43,10 @@ public class BreakfastItemService {
         List<BreakfastItem> items = repository.searchAllItems();
         return items.stream().map(BreakfastItemDTO::new).toList();
     }
-
+    @Transactional
+    public void insert(ItemInsertDTO dto) {
+        repository.insertItem(dto.getName());
+    }
     @Transactional
     public void update(Long id, BreakfastItemDTO dto) {
         User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
@@ -62,4 +66,6 @@ public class BreakfastItemService {
         List<BreakfastItem> missingItems = repository.searchMissingItemsByDay(LocalDate.now());
         missingItems.forEach(i -> repository.updateMissingItem(i.getId()));
     }
+
+
 }

@@ -1,10 +1,12 @@
 package com.unidac.breakfast.controller;
 
+import com.unidac.breakfast.dtos.request.ItemInsertDTO;
 import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
 import com.unidac.breakfast.service.BreakfastItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,13 @@ public class BreakfastItemController {
     @GetMapping
     public ResponseEntity<List<BreakfastItemDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
+    }
+
+    @Operation(summary = "Insere um registro de item")
+    @PostMapping
+    public ResponseEntity<String> insert(@Valid ItemInsertDTO dto) {
+        service.insert(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Item craido com sucesso");
     }
 
     @Operation(summary = "Atualiza um registro de item de café da manhã")

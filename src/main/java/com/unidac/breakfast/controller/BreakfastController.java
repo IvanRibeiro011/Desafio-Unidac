@@ -1,5 +1,6 @@
 package com.unidac.breakfast.controller;
 
+import com.unidac.breakfast.dtos.request.BreakfastAssociationDTO;
 import com.unidac.breakfast.dtos.request.BreakfastDayInsertDTO;
 import com.unidac.breakfast.dtos.request.UserAssociationDTO;
 import com.unidac.breakfast.dtos.response.BreakfastDayDTO;
@@ -42,6 +43,13 @@ public class BreakfastController {
         return ResponseEntity.ok("Café da manhã criado com sucesso");
     }
 
+    @Operation(summary = "Associa um registro de item a um café da manhã no banco de dados")
+    @PutMapping("/associate-item")
+    public ResponseEntity<String> associateItem(@Valid @RequestBody BreakfastAssociationDTO dto) {
+        service.associateItem(dto);
+        return ResponseEntity.ok("Item associado com sucesso");
+    }
+
     @Operation(summary = "Atualiza um registro de café da manhã ")
     @PutMapping("{id}")
     public ResponseEntity<String> update(@PathVariable("id") Long id, @Valid @RequestBody BreakfastDayInsertDTO dto) {
@@ -50,7 +58,7 @@ public class BreakfastController {
     }
 
     @Operation(summary = "Associa um usuário e itens a um registro de café da manhã")
-    @PutMapping("/associate")
+    @PutMapping("/associate-user")
     public ResponseEntity<String> associateToBreakfast(@Valid @RequestBody UserAssociationDTO dto) {
         service.associateUserToBreakfast(dto);
         return ResponseEntity.ok("Associação concluída com sucesso");

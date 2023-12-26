@@ -21,9 +21,16 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
     List<BreakfastItem> searchAllItems();
 
     @Query(nativeQuery = true,
+    value = "SELECT * FROM tb_items WHERE id IN [:ids]")
+    List<BreakfastItem> searchAllItemsByIds(List<Long> ids);
+    @Query(nativeQuery = true,
             value = "SELECT i.* FROM tb_items AS i INNER JOIN tb_breakfast as b ON i.breakfast_id = b.id" +
                     " WHERE b.date < :date AND i.missing IS NULL ")
     List<BreakfastItem> searchMissingItemsByDay(LocalDate date);
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "INSERT INTO tb_items (name) VALUES (:name)")
+    void insertItem(String name);
 
     @Modifying
     @Query(nativeQuery = true,
