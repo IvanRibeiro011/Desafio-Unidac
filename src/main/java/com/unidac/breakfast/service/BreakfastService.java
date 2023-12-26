@@ -73,11 +73,10 @@ public class BreakfastService {
         dtos.forEach(dto -> {
             if (itemRepository.verifyItemBynameAndDate(dto.getName(), day.getDate())) {
                 throw new ItemAlreadyRegisteredException("O item " + dto.getName() + " já foi registrado , favor escolher outra opção");
-            } else {
-                User user = userRepository.searchById(dto.getCollaboratorId())
-                        .orElseThrow(() -> new ResourceNotFoundException(userNotFound));
-                itemRepository.insert(dto.getName(), dto.getMissing(), user.getId(), day.getId());
             }
+            User user = userRepository.searchById(dto.getCollaboratorId())
+                    .orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+            itemRepository.insert(dto.getName(), dto.getMissing(), user.getId(), day.getId());
         });
     }
 

@@ -27,7 +27,7 @@ public class BreakfastDay implements Serializable {
     @JoinTable(name = "tb_breakfast_collaborator",
             joinColumns = @JoinColumn(name = "breakfast_id"),
             inverseJoinColumns = @JoinColumn(name = "collaborator_id"))
-    private Set<User> colaborators = new HashSet<>();
+    private Set<User> collaborators = new HashSet<>();
     @OneToMany(mappedBy = "breakfast", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BreakfastItem> items = new ArrayList<>();
 }

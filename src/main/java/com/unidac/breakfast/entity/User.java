@@ -27,7 +27,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "colaborator")
     private List<BreakfastItem> items = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "colaborators")
+    @ManyToMany(mappedBy = "collaborators")
     private Set<BreakfastDay> days = new HashSet<>();
 
     public User(Long id, String name, String cpf) {

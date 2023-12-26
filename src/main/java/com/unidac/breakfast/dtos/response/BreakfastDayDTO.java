@@ -17,13 +17,13 @@ import java.util.List;
 public class BreakfastDayDTO {
     private Long id;
     private LocalDate date;
-    private List<UserDTO> colaborators = new ArrayList<>();
+    private List<UserDTO> collaborators = new ArrayList<>();
     private List<BreakfastItemDTO> items = new ArrayList<>();
 
     public BreakfastDayDTO(BreakfastDay entity) {
         this.id = entity.getId();
         this.date = entity.getDate();
-        this.colaborators.addAll(entity.getColaborators().stream().map(UserDTO::new).toList());
+        this.collaborators.addAll(entity.getCollaborators().stream().map(UserDTO::new).toList());
         this.items.addAll(entity.getItems().stream().map(BreakfastItemDTO::new).toList());
     }
 }
