@@ -2,7 +2,7 @@ package com.unidac.breakfast.messages;
 
 public class Constants {
 
-    public static final String userNotFound = "Usuário não encontrado";
-    public static final String itemNotFound = "Item não encontrado";
-    public static final String breakfastNotFound = "Café da mnaã não encontrado";
+    public static final String USER_NOT_FOUND = "Usuário não encontrado";
+    public static final String ITEM_NOT_FOUND = "Item não encontrado";
+    public static final String BREAKFAST_NOT_FOUND = "Café da mnaã não encontrado";
 }

@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.breakfastNotFound;
-import static com.unidac.breakfast.messages.Constants.userNotFound;
+import static com.unidac.breakfast.messages.Constants.BREAKFAST_NOT_FOUND;
+import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
 
 @Service
 public class BreakfastService {
@@ -33,7 +33,7 @@ public class BreakfastService {
 
     @Transactional(readOnly = true)
     public BreakfastDayDTO findById(Long id) {
-        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(breakfastNotFound));
+        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         return new BreakfastDayDTO(day);
     }
 
@@ -46,7 +46,7 @@ public class BreakfastService {
     @Transactional
     public void insert(BreakfastDayInsertDTO dto) {
         repository.insert(dto.getDate());
-        BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(breakfastNotFound));
+        BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         List<User> users = userRepository.searchUsersById(dto.getItems().stream().map(ItemInsertDTO::getCollaboratorId).toList());
         associateDayWithUsers(users, day);
         if (!users.isEmpty()) {
@@ -56,8 +56,8 @@ public class BreakfastService {
 
     @Transactional
     public void associateUserToBreakfast(UserAssociationDTO dto) {
-        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
-        BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(breakfastNotFound));
+        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+        BreakfastDay day = repository.searchByDate(dto.getDate()).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         dto.getItems().forEach(
                 i -> {
                     if (itemRepository.verifyItemBynameAndDate(i.getName(), day.getDate())) {
@@ -75,27 +75,27 @@ public class BreakfastService {
                 throw new ItemAlreadyRegisteredException("O item " + dto.getName() + " já foi registrado , favor escolher outra opção");
             }
             User user = userRepository.searchById(dto.getCollaboratorId())
-                    .orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+                    .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
             itemRepository.insert(dto.getName(), dto.getMissing(), user.getId(), day.getId());
         });
     }
 
     private void associateDayWithUsers(List<User> users, BreakfastDay day) {
         for (User u : users) {
-            User user = userRepository.searchById(u.getId()).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+            User user = userRepository.searchById(u.getId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
             repository.associateDayWithUser(day.getId(), user.getId());
         }
     }
 
     @Transactional
     public void update(Long id, BreakfastDayInsertDTO dto) {
-        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(breakfastNotFound));
+        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         repository.updateBreakfast(day.getId(), dto.getDate());
     }
 
     @Transactional
     public void delete(Long id) {
-        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(breakfastNotFound));
+        BreakfastDay day = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(BREAKFAST_NOT_FOUND));
         day.getItems().forEach(i -> itemRepository.deleteItem(i.getId()));
         repository.unAssociateBreakfastAndUsers(day.getId());
         repository.deleteBreakfast(day.getId());

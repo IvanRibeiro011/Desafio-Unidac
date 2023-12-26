@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.userNotFound;
+import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
 
 @Service
 public class UserService {
@@ -25,7 +25,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
-        User user = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+        User user = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         return new UserDTO(user);
     }
 
@@ -47,7 +47,7 @@ public class UserService {
 
     @Transactional
     public void delete(Long id) {
-        User user = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+        User user = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         itemRepository.deleteItemWithUserId(user.getId());
         repository.unAssociateUsersFromBreakfast(user.getId());
         repository.deleteUser(user.getId());

@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.itemNotFound;
-import static com.unidac.breakfast.messages.Constants.userNotFound;
+import static com.unidac.breakfast.messages.Constants.ITEM_NOT_FOUND;
+import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
 
 @Service
 public class BreakfastItemService {
@@ -33,7 +33,7 @@ public class BreakfastItemService {
 
     @Transactional(readOnly = true)
     public BreakfastItemDTO findById(Long id) {
-        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(itemNotFound));
+        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(ITEM_NOT_FOUND));
         return new BreakfastItemDTO(item);
     }
 
@@ -45,14 +45,14 @@ public class BreakfastItemService {
 
     @Transactional
     public void update(Long id, BreakfastItemDTO dto) {
-        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(userNotFound));
+        User user = userRepository.searchById(dto.getCollaboratorId()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         BreakfastDay day = breakfastRepository.getReferenceById(dto.getBreakfastId());
         repository.updateItem(id, dto.getName(), dto.getMissing(), user.getId(), day.getId());
     }
 
     @Transactional
     public void delete(Long id) {
-        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(itemNotFound));
+        BreakfastItem item = repository.searchById(id).orElseThrow(() -> new ResourceNotFoundException(ITEM_NOT_FOUND));
         repository.deleteItem(item.getId());
     }
 
