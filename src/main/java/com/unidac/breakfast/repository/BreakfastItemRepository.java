@@ -58,7 +58,7 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
     @Query(nativeQuery = true,
             value = "UPDATE tb_items  SET name = :name " +
                     ", missing = :missing " +
-                    ", colaborator_id = :collaboratorId" +
+                    ", collaborator_id = :collaboratorId" +
                     ", breakfast_id = :breakfastId WHERE id = :id")
     void updateItem(Long id, String name, Boolean missing, Long collaboratorId, Long breakfastId);
 
