@@ -1,5 +1,6 @@
 package com.unidac.breakfast.dtos.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.unidac.breakfast.entity.BreakfastDay;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.List;
 @Setter
 public class BreakfastDayDTO {
     private Long id;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private List<UserDTO> collaborators = new ArrayList<>();
     private List<BreakfastItemDTO> items = new ArrayList<>();

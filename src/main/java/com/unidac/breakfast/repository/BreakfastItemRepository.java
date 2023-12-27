@@ -21,12 +21,14 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
     List<BreakfastItem> searchAllItems();
 
     @Query(nativeQuery = true,
-    value = "SELECT * FROM tb_items WHERE id IN [:ids]")
+            value = "SELECT * FROM tb_items WHERE id IN [:ids]")
     List<BreakfastItem> searchAllItemsByIds(List<Long> ids);
+
     @Query(nativeQuery = true,
             value = "SELECT i.* FROM tb_items AS i INNER JOIN tb_breakfast as b ON i.breakfast_id = b.id" +
                     " WHERE b.date < :date AND i.missing IS NULL ")
     List<BreakfastItem> searchMissingItemsByDay(LocalDate date);
+
     @Modifying
     @Query(nativeQuery = true,
             value = "INSERT INTO tb_items (name) VALUES (:name)")
@@ -46,10 +48,8 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
             LocalDate date
     );
 
-    @Query(value = "SELECT CASE WHEN COUNT(bi) > 0 THEN true ELSE false END " +
-            "FROM tb_items bi " +
-            "JOIN tb_breakfast bd ON bi.breakfast_id = bd.id " +
-            "WHERE LOWER(bi.name) = LOWER(:itemName)", nativeQuery = true)
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
+            "FROM tb_items WHERE LOWER(name) = LOWER(:itemName)", nativeQuery = true)
     boolean verifyItemByname(
             String itemName
     );
@@ -76,6 +76,4 @@ public interface BreakfastItemRepository extends JpaRepository<BreakfastItem, Lo
     @Query(nativeQuery = true,
             value = "DELETE FROM tb_items WHERE collaborator_id = :id")
     void deleteItemWithUserId(Long id);
-
-
 }

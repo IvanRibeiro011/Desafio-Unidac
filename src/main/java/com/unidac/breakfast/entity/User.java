@@ -24,7 +24,7 @@ public class User implements Serializable {
     @Column(unique = true)
     private String cpf;
 
-    @OneToMany(mappedBy = "colaborator")
+    @OneToMany(mappedBy = "collaborator")
     private List<BreakfastItem> items = new ArrayList<>();
 
     @ManyToMany(mappedBy = "collaborators")

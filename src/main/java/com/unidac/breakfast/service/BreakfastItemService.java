@@ -1,11 +1,9 @@
 package com.unidac.breakfast.service;
 
-import com.unidac.breakfast.dtos.request.ItemInsertDTO;
 import com.unidac.breakfast.dtos.response.BreakfastItemDTO;
 import com.unidac.breakfast.entity.BreakfastDay;
 import com.unidac.breakfast.entity.BreakfastItem;
 import com.unidac.breakfast.entity.User;
-import com.unidac.breakfast.exceptions.ItemAlreadyRegisteredException;
 import com.unidac.breakfast.exceptions.ResourceNotFoundException;
 import com.unidac.breakfast.repository.BreakfastDayRepository;
 import com.unidac.breakfast.repository.BreakfastItemRepository;
@@ -15,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.unidac.breakfast.messages.Constants.*;
+import static com.unidac.breakfast.messages.Constants.ITEM_NOT_FOUND;
+import static com.unidac.breakfast.messages.Constants.USER_NOT_FOUND;
 
 @Service
 public class BreakfastItemService {
@@ -41,16 +41,15 @@ public class BreakfastItemService {
     @Transactional(readOnly = true)
     public List<BreakfastItemDTO> findAll() {
         List<BreakfastItem> items = repository.searchAllItems();
-        return items.stream().map(BreakfastItemDTO::new).toList();
-    }
-
-    @Transactional
-    public void insert(ItemInsertDTO dto) {
-        if (repository.verifyItemByname(dto.getName())) {
-            repository.insertItem(dto.getName());
-        } else {
-            throw new ItemAlreadyRegisteredException(ITEM_ALREADY_REGISTERED);
+        List<BreakfastItemDTO> response = new ArrayList<>();
+        for (BreakfastItem i : items) {
+            if (i.getCollaborator() != null || i.getBreakfast() != null) {
+                response.add(new BreakfastItemDTO(i));
+            } else {
+                response.add(new BreakfastItemDTO(i.getId(), i.getName(), i.getMissing(), null, null));
+            }
         }
+        return response;
     }
 
     @Transactional

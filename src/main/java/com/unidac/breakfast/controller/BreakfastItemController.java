@@ -35,13 +35,6 @@ public class BreakfastItemController {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @Operation(summary = "Insere um registro de item")
-    @PostMapping
-    public ResponseEntity<String> insert(@Valid ItemInsertDTO dto) {
-        service.insert(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Item craido com sucesso");
-    }
-
     @Operation(summary = "Atualiza um registro de item de café da manhã")
     @PutMapping("{id}")
     public ResponseEntity<String> update(@PathVariable("id") Long id, @Valid @RequestBody BreakfastItemDTO dto) {

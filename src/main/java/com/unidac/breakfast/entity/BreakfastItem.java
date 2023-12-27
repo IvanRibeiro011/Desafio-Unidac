@@ -20,7 +20,7 @@ public class BreakfastItem implements Serializable {
     private Boolean missing;
     @ManyToOne
     @JoinColumn(name = "collaborator_id")
-    private User colaborator;
+    private User collaborator;
     @ManyToOne
     @JoinColumn(name = "breakfast_id")
     private BreakfastDay breakfast;

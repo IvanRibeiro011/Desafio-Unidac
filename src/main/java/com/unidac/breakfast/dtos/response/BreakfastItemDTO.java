@@ -21,7 +21,7 @@ public class BreakfastItemDTO {
         this.id = entity.getId();
         this.name = entity.getName();
         this.missing = entity.getMissing();
-        this.collaboratorId = entity.getColaborator().getId();
+        this.collaboratorId = entity.getCollaborator().getId();
         this.breakfastId = entity.getBreakfast().getId();
     }
 }
